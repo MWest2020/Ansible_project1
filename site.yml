@@ -1,6 +1,11 @@
-- name: Configure all lab nodes
+- name: Configureer alle lab nodes
   hosts: all
   become: true
   roles:
-    - common
+    - hardening
 
+- name: Nginx websluster uitrollen 
+  hosts: web
+  become: true
+  roles:
+    - webserver

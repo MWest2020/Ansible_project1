@@ -4,18 +4,21 @@ services:
   node1:
     build: .
     image: ansible-node 
+    container_name: node1
     tty: true
-    ports: ["2221:22"]
+    ports: ["2221:22", "8081:80"]
 
   node2:
     build: .
     image: ansible-node
+    container_name: node2  
     tty: true
-    ports: ["2222:22"]
+    ports: ["2222:22", "8082:80"]
 
   node3:
     build: .
     image: ansible-node
+    container_name: node3
     tty: true
-    ports: ["2223:22"]
+    ports: ["2223:22", "8083:80"]
 

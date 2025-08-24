@@ -1,0 +1,65 @@
+- name: Packages present (sshd, fail2ban, tzdata, logrotate)
+  apt:
+    name:
+      - openssh-server
+      - fail2ban
+      - tzdata
+      - logrotate
+    update_cache: yes
+    state: present
+
+- name: Harden sshd (no passwords, limited auth)
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?{{ item.key }}'
+    line: '{{ item.key }} {{ item.value }}'
+    state: present
+    backup: yes
+  loop:
+    - { key: 'PasswordAuthentication', value: 'no' }
+    - { key: 'PermitRootLogin',      value: 'prohibit-password' }
+    - { key: 'UseDNS',               value: 'no' }
+  notify: restart ssh
+
+- name: Set timezone to Europe/Amsterdam
+  timezone:
+    name: Europe/Amsterdam
+
+- name: Minimal fail2ban sshd jail (gentle)
+  copy:
+    dest: /etc/fail2ban/jail.d/sshd.local
+    content: |
+      [sshd]
+      enabled = true
+      maxretry = 5
+      findtime = 10m
+      bantime = 15m
+
+- name: Ensure services running
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - ssh
+    - fail2ban
+
+# UFW is in Ubuntu container vaak niet actief. Alleen configureren als aanwezig en actief.
+- name: Allow SSH/HTTP via ufw (if ufw present)
+  block:
+    - name: Install ufw
+      apt: { name: ufw, state: present }
+    - name: Allow ssh/http
+      ufw:
+        rule: allow
+        port: "{{ item }}"
+      loop: [22, 80]
+    - name: Enable ufw
+      ufw:
+        state: enabled
+        policy: deny
+  rescue:
+    - debug:
+        msg: "ufw niet geactiveerd (container context), overslaan."
+
+
