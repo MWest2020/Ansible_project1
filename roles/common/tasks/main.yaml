@@ -1,0 +1,11 @@
+- name: Zorg dat curl aanwezig is
+  apt:
+    name: curl
+    state: present
+    update_cache: yes
+
+- name: Zet een testbestand neer
+  copy:
+    dest: /tmp/hello.txt
+    content: "Hello from Ansible on {{ inventory_hostname }}!"
+

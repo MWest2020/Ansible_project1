@@ -1,0 +1,6 @@
+- name: Configure all lab nodes
+  hosts: all
+  become: true
+  roles:
+    - common
+

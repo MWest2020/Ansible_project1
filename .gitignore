@@ -1,0 +1,4 @@
+*.pem
+*.key
+ansible_lab
+ansible_lab.pub

@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  node1:
+    build: .
+    image: ansible-node 
+    tty: true
+    ports: ["2221:22"]
+
+  node2:
+    build: .
+    image: ansible-node
+    tty: true
+    ports: ["2222:22"]
+
+  node3:
+    build: .
+    image: ansible-node
+    tty: true
+    ports: ["2223:22"]
+
